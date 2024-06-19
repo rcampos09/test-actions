@@ -1,6 +1,8 @@
 name: Run hola.bash
 
-on: [push]
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   run-bash-script:
