@@ -11,4 +11,4 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run hola.bash
-      run: ./hola.bash
+      run: sh hola.bash
