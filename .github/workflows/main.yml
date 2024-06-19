@@ -1,0 +1,14 @@
+name: Run hola.bash
+
+on: [push]
+
+jobs:
+  run-bash-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Run hola.bash
+      run: ./hola.bash
