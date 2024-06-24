@@ -3,6 +3,11 @@ name: Run hola.bash
 on:
   push:
   workflow_dispatch:
+    inputs:
+      message:
+        description: 'Mensaje personalizado para hola.bash'
+        required: false
+        default: 'Mensaje predeterminado'
 
 jobs:
   run-bash-script:
