@@ -14,3 +14,6 @@ jobs:
 
     - name: Run hola.bash
       run: sh hola.bash
+
+    - name: Imprimir mensaje personalizado
+      run: echo "Mensaje personalizado: ${{ github.event.inputs.message }}"
