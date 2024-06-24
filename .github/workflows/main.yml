@@ -3,6 +3,13 @@ name: Run hola.bash
 on:
   push:
   workflow_dispatch:
+    inputs:
+      key1:
+        description: 'Descripción del primer input'
+        required: true
+      key2:
+        description: 'Descripción del segundo input'
+        required: false
 
 jobs:
   run-bash-script:
@@ -12,5 +19,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Run hola.bash
-      run: sh hola.bash
+    - name: Run hola.bash with inputs
+      run: |
+        sh hola.bash "${{ github.event.inputs.key1 }}" "${{ github.event.inputs.key2 }}"
+      shell: bash
