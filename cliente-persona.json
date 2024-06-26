@@ -1,9 +1,8 @@
 {
-    "nombre": "Juan Perez",
+    "name": "Juan Perez",
     "RUT": "12.345.678-9",
-    "Numero de tarjeta": "1234 5678 9012 3456",
-    "fecha": "06/24",
-    "año": 2024,
-    "CVV": "123"
-  }
-  
+    "number_card": "1234 5678 9012 3456",
+    "dale": "06/24",
+    "year": 2024,
+    "cvv": "123"
+}

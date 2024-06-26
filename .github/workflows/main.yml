@@ -2,24 +2,70 @@ name: Run hola.bash
 
 on:
   push:
-  workflow_dispatch:
-    inputs:
-      key1:
-        description: 'Descripción del primer input'
-        required: true
-      key2:
-        description: 'Descripción del segundo input'
-        required: false
+    branches:
+      - main
 
 jobs:
-  run-bash-script:
+  insert-data:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
 
-    - name: Run hola.bash with inputs
+    - name: Run hola.sh script
+      run: ./hola.sh
+
+    - name: Install dependencies
       run: |
-        sh hola.bash "${{ github.event.inputs.key1 }}" "${{ github.event.inputs.key2 }}"
-      shell: bash
+        sudo apt-get update
+        sudo apt-get install -y jq postgresql-client
+
+    - name: Check connection and insert data into PostgreSQL
+      env:
+        PG_HOST: ${{ secrets.PG_HOST }}
+        PG_PORT: ${{ secrets.PG_PORT }}
+        PG_USER: ${{ secrets.PG_USER }}
+        PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+        PG_DATABASE: ${{ secrets.PG_DATABASE }}
+      run: |
+        #!/bin/bash
+
+        # Archivo JSON
+        JSON_FILE="cliente-persona.json"
+
+        # Datos de conexión a PostgreSQL
+        HOST="${PG_HOST}"
+        PORT="${PG_PORT}"
+        USER="${PG_USER}"
+        PASSWORD="${PG_PASSWORD}"
+        DATABASE="${PG_DATABASE}"
+        TABLE="datos_personales"
+
+        # Función para verificar la conexión a PostgreSQL
+        check_connection() {
+          PGPASSWORD="$PASSWORD" psql -h "$HOST" -p "$PORT" -U "$USER" -d "$DATABASE" -c '\q' > /dev/null 2>&1
+          return $?
+        }
+
+        # Verificar la conexión
+        if check_connection; then
+          echo "Conexión a la base de datos exitosa. Insertando datos..."
+
+          # Leer el archivo JSON y extraer los datos usando jq
+          NAME=$(jq -r '.name' "$JSON_FILE")
+          RUT=$(jq -r '.RUT' "$JSON_FILE")
+          NUMBER_CARD=$(jq -r '.number_card' "$JSON_FILE")
+          DALE=$(jq -r '.dale' "$JSON_FILE")
+          YEAR=$(jq -r '.year' "$JSON_FILE")
+          CVV=$(jq -r '.cvv' "$JSON_FILE")
+
+          # Crear la consulta SQL de inserción
+          SQL_QUERY="INSERT INTO $TABLE (name, RUT, number_card, dale, year, cvv) VALUES ('$NAME', '$RUT', '$NUMBER_CARD', '$DALE', $YEAR, '$CVV');"
+
+          # Ejecutar la consulta SQL usando psql
+          PGPASSWORD="$PASSWORD" psql -h "$HOST" -p "$PORT" -U "$USER" -d "$DATABASE" -c "$SQL_QUERY"
+        else
+          echo "No se pudo conectar a la base de datos. Abortando."
+          exit 1
+        fi
