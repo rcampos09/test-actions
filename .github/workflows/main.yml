@@ -2,8 +2,14 @@ name: Run hola.bash
 
 on:
   push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      key1:
+        description: 'Descripción del primer input'
+        required: true
+      key2:
+        description: 'Descripción del segundo input'
+        required: false
 
 jobs:
   insert-data:
@@ -14,7 +20,7 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Run hola.sh script
-      run: sh hola.sh
+      run: sh hola.bash "${{ github.event.inputs.key1 }}" "${{ github.event.inputs.key2 }}"
 
     - name: Install dependencies
       run: |
