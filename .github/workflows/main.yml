@@ -62,12 +62,12 @@ jobs:
           NAME=$(jq -r '.name' "$JSON_FILE")
           RUT=$(jq -r '.RUT' "$JSON_FILE")
           NUMBER_CARD=$(jq -r '.number_card' "$JSON_FILE")
-          DALE=$(jq -r '.dale' "$JSON_FILE")
+          DATE=$(jq -r '.date' "$JSON_FILE")
           YEAR=$(jq -r '.year' "$JSON_FILE")
           CVV=$(jq -r '.cvv' "$JSON_FILE")
 
           # Crear la consulta SQL de inserción
-          SQL_QUERY="INSERT INTO $TABLE (name, RUT, number_card, dale, year, cvv) VALUES ('$NAME', '$RUT', '$NUMBER_CARD', '$DALE', $YEAR, '$CVV');"
+          SQL_QUERY="INSERT INTO $TABLE (name, RUT, number_card, date, year, cvv) VALUES ('$NAME', '$RUT', '$NUMBER_CARD', '$DATE', $YEAR, '$CVV');"
 
           # Ejecutar la consulta SQL usando psql
           PGPASSWORD="$PASSWORD" psql -h "$HOST" -p "$PORT" -U "$USER" -d "$DATABASE" -c "$SQL_QUERY"
